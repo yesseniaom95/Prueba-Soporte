@@ -1,0 +1,40 @@
+
+services:
+  app:
+    build:
+      args:
+        user: www
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    working_dir: /var/www/ 
+    depends_on:
+      - db
+    volumes:
+      - ./:/var/www
+
+  db:
+    image: mysql:8.0.25
+    container_name: laravel-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravelapp
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_USER: laravelapp_user
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+  
+  nginx:
+    image: nginx:alpine
+    container_name: travellist-nginx
+    ports:
+      - 8000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+   
+   
+
